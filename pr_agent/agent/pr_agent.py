@@ -1,5 +1,6 @@
 import shlex
 from functools import partial
+from starlette_context import context
 
 from pr_agent.algo.ai_handlers.base_ai_handler import BaseAiHandler
 from pr_agent.algo.ai_handlers.litellm_ai_handler import LiteLLMAIHandler
@@ -79,6 +80,11 @@ class PRAgent:
         if action not in command2class:
             get_logger().debug(f"Unknown command: {action}")
             return False
+
+        context["action"] = action
+        context["provider_id"] = get_settings().config.git_provider
+        context["pr_url"] = pr_url
+
         with get_logger().contextualize(command=action):
             get_logger().info("PR-Agent request handler started", analytics=True)
             if action == "reflect_and_review":

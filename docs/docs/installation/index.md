@@ -19,3 +19,26 @@ PR-Agent Pro, an app hosted by CodiumAI for GitHub\GitLab\BitBucket, is also ava
 <br>
 With PR-Agent Pro, installation is as simple as signing up and adding the PR-Agent app to your relevant repo. 
 See [here](./pr_agent_pro.md) for more details.
+
+# Advanced Configuration
+
+## Integrating with Logging Observability Platforms
+
+Various logging observability tools can be used out-of-the box when using the default LiteLLM AI Handler. Simply configure the LiteLLM callback settings in `configuration.toml` and set environment variables according to the LiteLLM [documentation](https://docs.litellm.ai/docs/).
+
+For example, to use [LangSmith](https://www.langchain.com/langsmith) you can add the following to your `configuration.toml` file:
+```
+[litellm]
+...
+success_callback = ["langsmith"]
+failure_callback = ["langsmith"]
+service_callback = ["langsmith"]
+```
+
+Then set the following environment variables:
+
+```
+LANGSMITH_API_KEY=<api_key>
+LANGSMITH_PROJECT=<project>
+LANGSMITH_BASE_URL=<url>
+```

@@ -2,6 +2,8 @@ import argparse
 import asyncio
 import os
 
+from starlette_context import request_cycle_context
+
 from pr_agent.agent.pr_agent import PRAgent, commands
 from pr_agent.config_loader import get_settings
 from pr_agent.log import setup_logger
@@ -71,12 +73,13 @@ def run(inargs=None, args=None):
 
     command = args.command.lower()
     get_settings().set("CONFIG.CLI_MODE", True)
-    if args.issue_url:
-        result = asyncio.run(PRAgent().handle_request(args.issue_url, [command] + args.rest))
-    else:
-        result = asyncio.run(PRAgent().handle_request(args.pr_url, [command] + args.rest))
-    if not result:
-        parser.print_help()
+    with request_cycle_context({"cli_mode": True}):
+        if args.issue_url:
+            result = asyncio.run(PRAgent().handle_request(args.issue_url, [command] + args.rest))
+        else:
+            result = asyncio.run(PRAgent().handle_request(args.pr_url, [command] + args.rest))
+        if not result:
+            parser.print_help()
 
 
 if __name__ == '__main__':
