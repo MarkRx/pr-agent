@@ -18,6 +18,7 @@ MAX_TOKENS = {
     'gpt-4-turbo': 128000,  # 128K, but may be limited by config.max_model_tokens
     'gpt-4o-mini': 128000,  # 128K, but may be limited by config.max_model_tokens
     'gpt-4o-mini-2024-07-18': 128000,  # 128K, but may be limited by config.max_model_tokens
+    'gpt-4o-2024-08-06': 128000,  # 128K, but may be limited by config.max_model_tokens
     'claude-instant-1': 100000,
     'claude-2': 100000,
     'command-nightly': 4096,
@@ -45,6 +46,7 @@ MAX_TOKENS = {
     'bedrock/anthropic.claude-3-sonnet-20240229-v1:0': 100000,
     'bedrock/anthropic.claude-3-haiku-20240307-v1:0': 100000,
     'bedrock/anthropic.claude-3-5-sonnet-20240620-v1:0': 100000,
+    'claude-3-5-sonnet': 100000,
     'groq/llama3-8b-8192': 8192,
     'groq/llama3-70b-8192': 8192,
     'groq/mixtral-8x7b-32768': 32768,

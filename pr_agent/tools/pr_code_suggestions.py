@@ -100,7 +100,7 @@ class PRCodeSuggestions:
                 data = {"code_suggestions": []}
 
             if data is None or 'code_suggestions' not in data or not data['code_suggestions']:
-                get_logger().error('No code suggestions found for the PR.')
+                get_logger().warning('No code suggestions found for the PR.')
                 pr_body = "## PR Code Suggestions ✨\n\nNo code suggestions found for the PR."
                 get_logger().debug(f"PR output", artifact=pr_body)
                 if self.progress_response:
@@ -291,7 +291,7 @@ class PRCodeSuggestions:
                                         self.token_handler,
                                         model,
                                         add_line_numbers_to_hunks=True,
-                                        disable_extra_lines=True)
+                                        disable_extra_lines=False)
 
         if self.patches_diff:
             get_logger().debug(f"PR diff", artifact=self.patches_diff)
@@ -455,8 +455,24 @@ class PRCodeSuggestions:
             original_initial_line = None
             for file in self.diff_files:
                 if file.filename.strip() == relevant_file:
-                    if file.head_file:  # in bitbucket, head_file is empty. toDo: fix this
-                        original_initial_line = file.head_file.splitlines()[relevant_lines_start - 1]
+                    if file.head_file:
+                        file_lines = file.head_file.splitlines()
+                        if relevant_lines_start > len(file_lines):
+                            get_logger().warning(
+                                "Could not dedent code snippet, because relevant_lines_start is out of range",
+                                artifact={'filename': file.filename,
+                                          'file_content': file.head_file,
+                                          'relevant_lines_start': relevant_lines_start,
+                                          'new_code_snippet': new_code_snippet})
+                            return new_code_snippet
+                        else:
+                            original_initial_line = file_lines[relevant_lines_start - 1]
+                    else:
+                        get_logger().warning("Could not dedent code snippet, because head_file is missing",
+                                             artifact={'filename': file.filename,
+                                                       'relevant_lines_start': relevant_lines_start,
+                                                       'new_code_snippet': new_code_snippet})
+                        return new_code_snippet
                     break
             if original_initial_line:
                 suggested_initial_line = new_code_snippet.splitlines()[0]
@@ -466,7 +482,7 @@ class PRCodeSuggestions:
                 if delta_spaces > 0:
                     new_code_snippet = textwrap.indent(new_code_snippet, delta_spaces * " ").rstrip('\n')
         except Exception as e:
-            get_logger().error(f"Could not dedent code snippet for file {relevant_file}, error: {e}")
+            get_logger().error(f"Error when dedenting code snippet for file {relevant_file}, error: {e}")
 
         return new_code_snippet
 
