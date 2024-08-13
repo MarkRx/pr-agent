@@ -22,10 +22,7 @@ def apply_repo_settings(pr_url):
                 pass
             if repo_settings is None:  # None is different from "", which is a valid value
                 repo_settings = git_provider.get_repo_settings()
-                try:
-                    context["repo_settings"] = repo_settings
-                except Exception:
-                    pass
+                context["repo_settings"] = repo_settings
 
             if repo_settings:
                 repo_settings_file = None

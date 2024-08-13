@@ -264,6 +264,10 @@ pr_commands = [
 [litellm]
 # use_client = false
 # drop_params = false
+# Use to integrate with observability platforms. See Logging & Observability section under https://docs.litellm.ai/docs/
+# success_callback = []
+# failure_callback = []
+# service_callback = []
 
 [pr_similar_issue]
 skip_comments = false
